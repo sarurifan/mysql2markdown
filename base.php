@@ -34,9 +34,9 @@ class Config
      */
     public static function range($range)
     {
-        self::$range = $range;
+        //self::$range = $range;
 
-        if (!isset(self::$config[$range])) self::$config[$range] = [];
+        //if (!isset(self::$config[$range])) self::$config[$range] = [];
     }
 
     
@@ -60,6 +60,31 @@ class Config
 
     }
 
+    //转换成markdown格式表头
+    public static function toMarkdownTab(){
+
+    }
+
+    //转换成markdown格式表头
+    public static function toMarkdownField(){
+
+    }
+
+    //读取索引
+    public static function readMysqlIndex(){
+
+    }
+
+    //构建索引数组
+    public static function setIndexArr(){
+
+    }
+
+    //根据索引数组生成文件
+    public static function makeIndexFile(){
+
+    }
+
     //根据数组生成文件
     public static function makeFile(){
 
@@ -68,47 +93,6 @@ class Config
     //返回 生成结果
     public static function returnFile(){
 
-    }
-
-
-
-    /**
-     * 获取配置参数 为空则获取所有配置
-     * @access public
-     * @param  string $name 配置参数名（支持二级配置 . 号分割）
-     * @param  string $range  作用域
-     * @return mixed
-     */
-    public static function get($name = null, $range = '')
-    {
-        $range = $range ?: self::$range;
-
-        // 无参数时获取所有
-        if (empty($name) && isset(self::$config[$range])) {
-            return self::$config[$range];
-        }
-
-        // 非二级配置时直接返回
-        if (!strpos($name, '.')) {
-            $name = strtolower($name);
-            return isset(self::$config[$range][$name]) ? self::$config[$range][$name] : null;
-        }
-
-        // 二维数组设置和获取支持
-        $name    = explode('.', $name, 2);
-        $name[0] = strtolower($name[0]);
-
-        if (!isset(self::$config[$range][$name[0]])) {
-            // 动态载入额外配置
-            $module = Request::instance()->module();
-            $file   = CONF_PATH . ($module ? $module . DS : '') . 'extra' . DS . $name[0] . CONF_EXT;
-
-            is_file($file) && self::load($file, $name[0]);
-        }
-
-        return isset(self::$config[$range][$name[0]][$name[1]]) ?
-            self::$config[$range][$name[0]][$name[1]] :
-            null;
     }
 
     /**
@@ -128,3 +112,4 @@ class Config
         }
     }
 }
+
