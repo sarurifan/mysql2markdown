@@ -10,7 +10,8 @@
 // +----------------------------------------------------------------------
 
 namespace saruri;
-
+//include_once('orm.php');
+//use orm;
  /**
      * mysql转换为markdown格式
      */
@@ -42,7 +43,9 @@ class Config
     
     //连接数据库
     public static function setOrm(){
-
+        //$ormConn= new Orm();
+        //$ormConn->mysqlLiConnect();
+        exit("连接数据库");
     }
 
     //读取表头
