@@ -11,64 +11,122 @@
 
 namespace saruri;
 
- /**
-     * mysql转换为markdown格式
-     */
-class Config
+/**
+* mysql转换为markdown格式
+*/
+class Base
 {
     /**
      * @var array 配置参数
      */
-    private static $config = [];
+    private static $_config = [
+        'DB_HOST' => '192.168.0.168',
+        'DB_NAME'=> 'thinkssns_com',
+        'DB_USER' => 'thinkssns_com',
+        'DB_PWD' => 'NHGMJBW7FfdF2etF',
+    ];
 
-    /**
-     * @var string 参数作用域
-     */
-    private static $range = '_sys_';
+    public  $orm,$tables,$conn;
 
-    /**
-     * 设定配置参数的作用域
-     * @access public
-     * @param  string $range 作用域
-     * @return void
-     */
-    public static function range($range)
+    //初始
+    public function __construct()
     {
-        //self::$range = $range;
+        //各种配置
+        date_default_timezone_set('Asia/Shanghai');
+    }
+    
+    //重载配置
+    public function  setConfig($config){
+        
+        self::$_config=$config;
+        
+    }
+    
 
-        //if (!isset(self::$config[$range])) self::$config[$range] = [];
+    //连接数据库
+    public  function setOrm(){
+       
+        $mysql_conn = mysqli_connect(self::$_config['DB_HOST'], self::$_config['DB_USER'], self::$_config['DB_PWD']) or die("DataBase Connect false.");
+        mysqli_select_db($mysql_conn, self::$_config['DB_NAME']);
+        $result = $mysql_conn->query('show tables');
+        $mysql_conn->query('SET NAME UTF8');   
+        $this->orm= $result;
+        $this->conn=$mysql_conn;
+
     }
 
-    
-    //连接数据库
-    public static function setOrm(){
+    //执行
+    public  function run(){
+
+        $this->setOrm();
+        $this->readTabName();
+        $this->readTabSchema();
+        $this->readTabField();
+        $this->closeConn();
+
+        return $this->tables;
 
     }
 
     //读取表头
-    public static function readTabName(){
+    public  function readTabName(){
+
+        while ($row = mysqli_fetch_array($this->orm))
+        {
+            $this->tables[]['TABLE_NAME'] = $row[0];
+        }
 
     }
+
+   
+    //读取注释
+    public function readTabSchema()
+    {
+        // 循环取得所有表的备注及表中列消息
+        foreach ($this->tables as $k => $v) {
+
+            $sql = 'SELECT * FROM ';
+            $sql .= 'INFORMATION_SCHEMA.TABLES ';
+            $sql .= 'WHERE ';
+            $sql .= "table_name = '{$v['TABLE_NAME']}' AND table_schema = '".self::$_config['DB_NAME']."'";
+            $table_result = $this->conn->query($sql);
+            while ($t = mysqli_fetch_array($table_result))
+            {
+                $this->tables[$k]['TABLE_COMMENT'] = $t['TABLE_COMMENT'];
+            }
+
+        }
+    }
+          
 
     //读取字段
-    public static function readTabField(){
+    public  function readTabField(){
 
+        // 循环取得所有表的的字段
+        foreach ($this->tables as $k => $v) {
+
+            $sql = 'SELECT * FROM ';
+            $sql .= 'INFORMATION_SCHEMA.COLUMNS ';
+            $sql .= 'WHERE ';
+            $sql .= "table_name = '{$v['TABLE_NAME']}' AND table_schema = '".self::$_config['DB_NAME']."'";
+     
+            $fields = array();
+            $field_result = $this->conn->query($sql);
+            while ($t = mysqli_fetch_array($field_result)) {
+                $fields[] = $t;
+            }
+
+            $this->tables[$k]['COLUMN'] = $fields;
+
+        }
     }
 
-    //生成数组
-    public static function setArr(){
+    //关闭数据库
+    public  function closeConn(){
 
-    }
+        mysqli_close($this->conn);
 
-    //转换成markdown格式表头
-    public static function toMarkdownTab(){
-
-    }
-
-    //转换成markdown格式表头
-    public static function toMarkdownField(){
-
-    }
+    } 
 
     //读取索引
     public static function readMysqlIndex(){
@@ -85,31 +143,5 @@ class Config
 
     }
 
-    //根据数组生成文件
-    public static function makeFile(){
-
-    }
-
-    //返回 生成结果
-    public static function returnFile(){
-
-    }
-
-    /**
-     * 重置配置参数
-     * @access public
-     * @param  string $range 作用域
-     * @return void
-     */
-    public static function reset($range = '')
-    {
-        $range = $range ?: self::$range;
-
-        if (true === $range) {
-            self::$config = [];
-        } else {
-            self::$config[$range] = [];
-        }
-    }
 }
 
