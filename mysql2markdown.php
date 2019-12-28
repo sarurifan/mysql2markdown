@@ -8,7 +8,7 @@
  * @package   SARURI
  * @author    saruri <saruri@163.com>
  * @copyright 2006-2019 saruri
- * @license   https://saruri.cn/licence.txt BSD Licence
+ * @license   MIT LICENSE
  * @link      http://saruri.cn
  * @date      2019/12/28 14:04:42  
  */
@@ -23,23 +23,22 @@ class Mysql2Markdown extends Base
         'DB_NAME'=> 'opensns_com',
         'DB_USER' => 'opensns_com',
         'DB_PWD' => 'Jebt6zaDPiZd4LGR',
-    ];
-
-    //页面样式
-    private static $style='width:900px;margin:auto;';
+    ];  
  
     public $base,$tabArr;
     public $br='<br>';
-      
+    public static $width=960;
+    //页面样式
+    public static $style='width:960px;margin:auto;';
+    public static $css="github-markdown.css";
    //初始化
-   public function __construct($config)
+   public function __construct($config=[])
    {
         //载入默认配置
         if($config){ 
             self::$_config=$config;
-            exit("有配置文件");
         }
-        exit("没有有配置文件");
+        
         $this->init();
    }
       
@@ -53,6 +52,16 @@ class Mysql2Markdown extends Base
         $this->tabArr=parent::run();
    }
    
+   //控制表格 宽度
+   public function changeWidth($width=960){  
+        self::$style='width:'.$width.'px;margin:auto;';
+   }
+
+   //控制css地址
+    public function changeCss($url='github-markdown.css'){  
+    self::$css=$url;
+    }
+
    //输出成json
    public function toJson(){
         $json=json_encode($this->tabArr,true);
@@ -114,9 +123,10 @@ class Mysql2Markdown extends Base
         $this->br="\r\n";
         $html = $this->toMarkdown();
         $parser = new Parser();
-        $markdown ='  <link rel="stylesheet" href="github-markdown.css" /><body class="markdown-body"><div style="'.self::$style.'">';
+        $markdown ='  <link rel="stylesheet" href="'.self::$css.'" /><body class="markdown-body"><div style="'.self::$style.'">';
         $markdown .= $parser->makeHtml($html);
-        $markdown .='</div></body>';
+        $markdown .= '</div>';
+        $markdown .='<h4><a href="https://github.com/sarurifan/mysql2markdown" target="_blank">https://github.com/sarurifan/mysql2markdown</h4></body>';
         return $markdown ;
         
     }  

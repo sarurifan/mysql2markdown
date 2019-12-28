@@ -8,7 +8,7 @@
  * @package   SARURI
  * @author    saruri <saruri@163.com>
  * @copyright 2006-2019 saruri
- * @license   https://saruri.cn/licence.txt BSD Licence
+ * @license   MIT LICENSE
  * @link      http://saruri.cn
  * @date      2019/12/28 19:04:42  
  */
@@ -19,20 +19,25 @@ include_once "base.php";
 include_once "mysql2markdown.php";
 include_once "parser.php";
 
+
 $_config = [
-    'DB_HOST' => '192.168.0.168',
-    'DB_NAME'=> 'opensns_com',
-    'DB_USER' => 'opensns_com',
-    'DB_PWD' => 'Jebt6zaDPiZd4LGR',
+    'DB_HOST' => 'localhost',
+    'DB_NAME'=> 'systemx_com',
+    'DB_USER' => 'systemx_com',
+    'DB_PWD' => 'mG3R6f7nk4J2dP2Z',   
 ];
-$_config = [];
+
 $m2m = new Mysql2Markdown($_config);
-//$m2m = new Mysql2Markdown();
-// $m2m->toJson(); 示例输出成json
+//示例 可选 更改宽度 默认960
+//$m2m ->changeWidth(500);
+
+//示例 可选 更改css 
+$m2m ->changeCss('https://github.githubassets.com/assets/github-102d2679bcc893600ce928d5c6d34297.css');
+
+//$m2m->toJson(); 示例输出成json
 //$html=$m2m->toMarkdown();
 
 //默认markdown
 $html=$m2m->toMarkdownParser();
 
 exit($html);
-//$m2m->run();
