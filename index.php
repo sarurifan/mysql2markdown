@@ -26,18 +26,40 @@ $_config = [
     'DB_USER' => 'systemx_com',
     'DB_PWD' => 'mG3R6f7nk4J2dP2Z',   
 ];
-
+$_config=[
+    'DB_HOST' => 'localhost',
+    'DB_NAME'=> 'thinkssns_com',
+    'DB_USER' => 'thinkssns_com',
+    'DB_PWD' => 'NHGMJBW7FfdF2etF', 
+];
 $m2m = new Mysql2Markdown($_config);
-//示例 可选 更改宽度 默认960
-//$m2m ->changeWidth(500);
+
+
+
 
 //示例 可选 更改css 
-$m2m ->changeCss('https://github.githubassets.com/assets/github-102d2679bcc893600ce928d5c6d34297.css');
+//$m2m ->changeCss('https://github.githubassets.com/assets/github-102d2679bcc893600ce928d5c6d34297.css');
 
-//$m2m->toJson(); 示例输出成json
-//$html=$m2m->toMarkdown();
 
-//默认markdown
-$html=$m2m->toMarkdownParser();
+if($_GET['action']=='json'){
+    $m2m->toJson(); //示例输出成json
+}
+
+
+if($_GET['action']=='source'){
+    $html=$m2m->toMarkdown();
+}
+
+if(!$_GET['action']){
+    if($_GET['width']){
+        //示例 可选 更改宽度 默认960
+        $width=intval($_GET['width']);
+        $width == 0 || $width==960;
+        $m2m ->changeWidth($width);
+    }
+    //默认markdown
+    $html=$m2m->toMarkdownParser();
+}
+
 
 exit($html);
