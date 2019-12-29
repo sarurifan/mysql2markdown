@@ -1,1 +1,3 @@
 *.git
+ftp-sync.json
+/.vscode
